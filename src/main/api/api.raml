@@ -1,7 +1,49 @@
 #%RAML 0.8
 title: Sample API
 
-/getFlights:
+/getFlightsDelta:
+    get:
+     queryParameters:
+        destination:
+          type: string
+          required: false
+          displayName: Destination airport code
+     responses:
+      200:
+         body:
+            application/json:
+              example:  |
+               { 
+                "success":true, 
+                "message": "Succesful" 
+               }
+                
+      400:
+        body:
+          application/json:
+            example:  |
+              { 
+                "success": false, 
+                "message": "Bad request - The server cannot process the request due to a client error" 
+              }
+      404:
+        body:
+          application/json:
+             example: |
+              {
+                "success": false,
+                "message": "Not found"
+              }
+      500:
+        body:
+          application/json:
+             example: |
+              {
+                "success": false,
+                "message": "Server error"
+              }
+              
+/getFlightsUnited:
     get:
      queryParameters:
         destination:

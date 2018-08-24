@@ -9,7 +9,8 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 
     <context:property-placeholder location="api.properties" />
     <apikit:config name="Router" raml="api.raml" consoleEnabled="true" consolePath="console" keepRamlBaseUri="false" doc:name="Router">
-        <apikit:flow-mapping resource="/getFlights" action="get" flow-ref="getFlightsFlowProcess"/>
+        <apikit:flow-mapping resource="/getFlightsDelta" action="get" flow-ref="getFlightsFlowDeltaProcess"/>
+        <apikit:flow-mapping resource="/getFlightsUnited" action="get" flow-ref="getFlightsFlowUnitedProcess"/>
     </apikit:config>
     <flow name="api-main">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*" doc:name="HTTP" allowedMethods="GET"/>
@@ -17,15 +18,17 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
-    <flow name="getFlightsFlowProcess">
+    <flow name="getFlightsFlowDeltaProcess">
         <set-session-variable variableName="destination" value="#[message.inboundProperties.'http.query.params'.destination]" doc:name="Session Variable"/>
-        <set-session-variable variableName="airline" value="#[message.inboundProperties.'http.query.params'.airline]" doc:name="Session Variable"/>
         <http:request config-ref="HTTP_Request_Configuration" path="process/getFlights" method="GET" doc:name="HTTP">
             <http:request-builder>
                 <http:query-param paramName="destination" value="#[sessionVars.destination]"/>
                 <http:query-param paramName="airline" value="#[sessionVars.airline]"/>
             </http:request-builder>
         </http:request>
+    </flow>
+    <flow name="getFlightsFlowUnitedProcess">
+        <http:request config-ref="HTTP_Request_Configuration" path="process/getFlights" method="GET" doc:name="HTTP"/>
     </flow>
 
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
