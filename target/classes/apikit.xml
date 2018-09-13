@@ -9,30 +9,15 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 
     <context:property-placeholder location="api.properties" />
     <apikit:config name="Router" raml="api.raml" consoleEnabled="true" consolePath="console" keepRamlBaseUri="false" doc:name="Router">
-        <apikit:flow-mapping resource="/getFlightsDelta" action="get" flow-ref="getFlightsFlowDeltaProcess"/>
-        <apikit:flow-mapping resource="/getFlightsUnited" action="get" flow-ref="getFlightsFlowUnitedProcess"/>
+        <apikit:flow-mapping resource="/flights" action="get" flow-ref="get:/flights"/>
+        <apikit:flow-mapping resource="/flights/delta" action="get" flow-ref="get:/flights/delta"/>
+        <apikit:flow-mapping resource="/flights/united" action="get" flow-ref="get:/flights/united"/>
     </apikit:config>
     <flow name="api-main">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*" doc:name="HTTP" allowedMethods="GET"/>
         <apikit:router config-ref="Router" doc:name="APIkit Router"/>
 
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
-    </flow>
-    <flow name="getFlightsFlowDeltaProcess">
-        <set-session-variable variableName="destination" value="#[message.inboundProperties.'http.query.params'.destination]" doc:name="Session Variable to destination"/>
-        <http:request config-ref="HTTP_Request_Configuration" path="process/getFlightsDelta" method="GET" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-param paramName="destination" value="#[sessionVars.destination]"/>
-            </http:request-builder>
-        </http:request>
-    </flow>
-    <flow name="getFlightsFlowUnitedProcess">
-        <set-session-variable variableName="destination" value="#[message.inboundProperties.'http.query.params'.destination]" doc:name="Session Variable to destination"/>
-        <http:request config-ref="HTTP_Request_Configuration" path="process/getFlightsUnited" method="GET" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-param paramName="destination" value="#[sessionVars.destination]"/>
-            </http:request-builder>
-        </http:request>
     </flow>
 
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
